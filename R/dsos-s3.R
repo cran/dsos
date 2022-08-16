@@ -50,9 +50,10 @@ annotate_pvalue <- function(p_value) {
     "text",
     x = -Inf,
     y = Inf,
-    label = scales::pvalue(p_value, add_p = T),
+    label = scales::pvalue(p_value, add_p = TRUE),
     hjust = 0,
-    vjust = 1
+    vjust = 1,
+    size = 9
   )
   return(pvalue_layer)
 }
@@ -80,22 +81,24 @@ prep_os_data <- function(x) {
 }
 
 
-#' Plot the result of the D-SOS test.
+#' Plot result of test for no adverse shift.
 #'
 #' @param x A \code{outlier.test} object from a D-SOS test.
-#' @param ... Placeholder to be comptatible with S3 `plot` generic.
+#' @param ... Placeholder to be compatible with S3 `plot` generic.
 #'
 #' @return A \pkg{ggplot2} plot with outlier scores and p-value.
 #'
 #' @examples
 #' \donttest{
 #' set.seed(12345)
-#' data(iris)
-#' x_train <- iris[1:50, 1:4] # Training sample: Species == 'setosa'
-#' x_test <- iris[51:100, 1:4] # Test sample: Species == 'versicolor'
-#' iris_test <- od_pt(x_train, x_test)
-#' plot(iris_test)
+#' os_train <- rnorm(n=3e2)
+#' os_test <- rnorm(n=3e2)
+#' test_to_plot <- at_from_os(os_train, os_test)
+#' # Also: pt_from_os(os_train, os_test) for permutation test
+#' plot(test_to_plot)
 #' }
+#'
+#' @family s3-method
 #'
 #' @export
 plot.outlier.test <- function(x, ...) {
@@ -112,4 +115,62 @@ plot.outlier.test <- function(x, ...) {
   # Add p-value
   os_plot <- os_plot + annotate_pvalue(p_value)
   return(os_plot)
+}
+
+
+#' Print result of test for no adverse shift.
+#'
+#' @param x A \code{outlier.test} object from a D-SOS test.
+#' @param n The number of outlier scores to print for each sample.
+#' @param ... Placeholder to be compatible with S3 `print` generic.
+#'
+#' @return A \pkg{ggplot2} plot with outlier scores and p-value.
+#'
+#' @examples
+#' \donttest{
+#' set.seed(12345)
+#' os_train <- rnorm(n=3e2)
+#' os_test <- rnorm(n=3e2)
+#' test_to_print <- at_from_os(os_train, os_test)
+#' # Also: pt_from_os(os_train, os_test) for permutation test
+#' test_to_print
+#' }
+#'
+#' @family s3-method
+#'
+#' @export
+print.outlier.test <- function(x, n = 5, ...) {
+  cat("\n")
+  cat(strwrap("Test for no adverse shift", prefix = "\t"), sep = "\n")
+  cat("\n")
+
+  out <- character()
+  if (!is.null(x[["p_value"]])) {
+    fp <- format.pval(x[["p_value"]])
+    fp <- if (startsWith(fp, "<")) fp else paste("=", fp)
+    out <- c(out, paste("p-value", fp))
+  }
+  cat(strwrap(paste(out, collapse = ", ")), sep = "\n")
+  cat("\n")
+  cat(
+    paste0("The first ",
+            n,
+            " outlier scores (out of ",
+            length(x[["outlier_scores"]][["train"]]),
+            ") from the training (reference) sample:\n"
+          )
+    )
+  print(utils::head(unname(x[["outlier_scores"]][["train"]]), n))
+  cat("\n")
+  cat(
+    paste0("The first ",
+            n,
+            " outlier scores (out of ",
+            length(x[["outlier_scores"]][["test"]]),
+            ") from the test sample:\n"
+          )
+    )
+  print(utils::head(unname(x[["outlier_scores"]][["test"]]), n))
+  cat("\n")
+  invisible(x)
 }
