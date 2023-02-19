@@ -7,9 +7,9 @@ weights_from_contamined <- function(contamination_rate) {
 
 #' @noRd
 #' @keywords  internal
-make_threshold_fn <- function(os_train, weight = rep(1, length(os_train))) {
+make_threshold_fn <- function(score, weight = rep(1, length(score))) {
   # Create empirical cumulative distribution function
-  fn <- ewcdf(os_train, weight)
+  fn <- ewcdf(score, weight)
 
   # Create function closure
   weight_fn <- function(os) {
@@ -129,7 +129,7 @@ wauc <- function(label,
 #' \code{NULL}, the default, all weights are set to 1.
 #'
 #' @return
-#' The value (scalar) of the weighted AUC given the weighting scheme.
+#' The weighted AUC (scalar value) given the weighting scheme.
 #'
 #' @examples
 #' \donttest{

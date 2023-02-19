@@ -28,10 +28,10 @@ A named list of class \code{outlier.test} containing:
 }
 \description{
 Test for no adverse shift with outlier scores. Like goodness-of-fit testing,
-this two-sample comparison takes the training set, \code{x_train} or
-\code{os_train}, as the reference. The method checks whether the test set,
-\code{x_test} or \code{os_test}, is worse off relative to this reference
-set.
+this two-sample comparison takes the training set, \code{x_train} as the
+as the reference. The method checks whether the test set, \code{x_test}, is
+worse off relative to this reference set. The function \code{scorer} assigns
+an outlier score to each instance/observation in both training and test set.
 }
 \details{
 Li and Fine (2010) derives the asymptotic null distribution for the weighted
@@ -58,15 +58,11 @@ data(iris)
 setosa <- iris[1:50, 1:4] # Training sample: Species == 'setosa'
 versicolor <- iris[51:100, 1:4] # Test sample: Species == 'versicolor'
 
-# Sample memberships with sample splitting
-scorer_split <- function(x_train, x_test) split_cp(x_train, x_test)
-cp_test <- at_oob(setosa, versicolor, scorer = scorer_split)
-cp_test
-
-# Sample memberships without sample splitting (out-of-bag predictions)
-scorer_oob <- function(x_train, x_test) score_cp(x_train, x_test)
-oob_test <- at_oob(setosa, versicolor, scorer = scorer_oob)
+# Using fake scoring function
+scorer <- function(tr, te) list(train=runif(nrow(tr)), test=runif(nrow(te)))
+oob_test <- at_oob(setosa, versicolor, scorer = scorer)
 oob_test
+
 }
 
 }
@@ -78,10 +74,6 @@ In The 38th Conference on Uncertainty in Artificial Intelligence. PMLR.
 Gandy, A. (2009).
 \emph{Sequential implementation of Monte Carlo tests with uniformly bounded resampling risk}.
 Journal of the American Statistical Association, 104(488), 1504-1511.
-
-Li, J., & Fine, J. P. (2010).
-\emph{Weighted area under the receiver operating characteristic curve and its application to gene selection}.
-Journal of the Royal Statistical Society: Series C (Applied Statistics), 59(4), 673-692.
 }
 \seealso{
 [pt_oob()] for (faster) p-value approximation via out-of-bag predictions.

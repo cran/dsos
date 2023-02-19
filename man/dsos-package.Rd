@@ -6,7 +6,7 @@
 \alias{dsos-package}
 \title{dsos: Dataset Shift with Outlier Scores}
 \description{
-Test for no adverse shift in two-sample comparison when we have a training set, the reference distribution, and a test set. The approach is flexible (extensible) and relies on a robust and powerful test statistic, the weighted AUC. See Kamulete, V. M. (2021) \href{https://arxiv.org/abs/2107.02990}{arXiv:2107.02990} for details. Outlier scores such as trust scores and prediction uncertainty can be used as the basis for comparison for example.
+Test for no adverse shift in two-sample comparison when we have a training set, the reference distribution, and a test set. The approach is flexible and relies on a robust and powerful test statistic, the weighted AUC. Technical details are in Kamulete, V. M. (2021) \href{https://arxiv.org/abs/1908.04000}{arXiv:1908.04000}. Modern notions of outlyingness such as trust scores and prediction uncertainty can be used as the underlying scores for example.
 }
 \seealso{
 Useful links:
@@ -21,7 +21,7 @@ Useful links:
 
 Other contributors:
 \itemize{
-  \item  Royal Bank of Canada (RBC) (Research supported by RBC) [copyright holder]
+  \item  Royal Bank of Canada (RBC) (Research supported and funded by RBC) [copyright holder]
 }
 
 }

@@ -1394,8 +1394,8 @@ pre code {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -1403,16 +1403,9 @@ pre code {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -1538,16 +1531,12 @@ div.tocify {
 
 <h1 class="title toc-ignore">A 10-minute Crash Course</h1>
 <h4 class="author">Vathy M. Kamulete</h4>
-<address class="author_afil">
-Royal Bank of Canada<br><a class="author_email" href="mailto:#"><a href="mailto:vathy.kamulete@rbc.com" class="email">vathy.kamulete@rbc.com</a></a>
-</address>
-<h4 class="date">Last Updated: 2022-08-16</h4>
+<h4 class="date">Last Updated: 2023-02-18</h4>
 
 </div>
 
 
-<p>Note that this vignette is adapted from the <a href="https://openreview.net/forum?id=S5UG2BLi9xc">paper</a> as cited
-below <span class="citation">(Kamulete 2022)</span>.</p>
+<p>Note that this vignette is adapted from the <a href="https://openreview.net/forum?id=S5UG2BLi9xc">paper</a> <span class="citation">(Kamulete 2022)</span>.</p>
 <div id="background" class="section level2">
 <h2>Background</h2>
 <p>Suppose we fit a predictive model on a training set and predict on a
@@ -1583,14 +1572,13 @@ pays more attention to the regions –- typically, the outlying regions –-
 where we are most vulnerable. To confront false alarms, it uses a robust
 test statistic, namely the weighted area under the receiver operating
 characteristic curve (WAUC). The weights in the WAUC discount the safe
-regions of the distribution. To the best of our knowledge, this is the
-first time that the WAUC is being used as a test statistic in this
-context. The goal of <code>D-SOS</code> is to detect <em>non-negligible
-adverse shifts</em>. This is reminiscent of noninferiority tests, widely
-used in healthcare to determine if a new treatment is in fact not
-inferior to an older one. Colloquially, the <code>D-SOS</code> null
-hypothesis holds that the new sample is not substantively worse than the
-old sample, and not that the two are equal.</p>
+regions of the distribution. The goal of <code>D-SOS</code> is to detect
+<em>non-negligible adverse shifts</em>. This is reminiscent of
+noninferiority tests, widely used in healthcare to determine if a new
+treatment is in fact not inferior to an older one. Colloquially, the
+<code>D-SOS</code> null hypothesis holds that the new sample is not
+substantively worse than the old sample, and not that the two are
+equal.</p>
 <p><code>D-SOS</code> moves beyond tests of equal distributions and lets
 users specify which notions of outlyingness to probe. The choice of the
 score function plays a central role in formalizing what we mean by

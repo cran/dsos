@@ -15,7 +15,7 @@ pt_oob(x_train, x_test, scorer, n_pt = 2000)
 the training and test sample. The first argument to \code{scorer} must be
 \code{x_train}; the second, \code{x_test}. The returned named list contains
 two elements: \emph{train} and \emph{test}, each of which is a vector of
-(outlier) scores. See notes below for more information.}
+corresponding (outlier) scores. See notes below for more information.}
 
 \item{n_pt}{The number of permutations.}
 }
@@ -30,18 +30,18 @@ A named list of class \code{outlier.test} containing:
 }
 \description{
 Test for no adverse shift with outlier scores. Like goodness-of-fit testing,
-this two-sample comparison takes the training set, \code{x_train} or
-\code{os_train}, as the reference. The method checks whether the test set,
-\code{x_test} or \code{os_test}, is worse off relative to this reference
-set.
+this two-sample comparison takes the training set, \code{x_train} as the
+as the reference. The method checks whether the test set, \code{x_test}, is
+worse off relative to this reference set. The function \code{scorer} assigns
+an outlier score to each instance/observation in both training and test set.
 }
 \details{
-The empirical null distribution uses \code{n_pt} permutations to estimate
-the p-value. For speed, this is implemented as a sequential Monte Carlo test
+The null distribution of the test statistic is based on \code{n_pt}
+permutations. For speed, this is implemented as a sequential Monte Carlo test
 with the \pkg{simctest} package. See Gandy (2009) for details. The prefix
 \emph{pt} refers to permutation test. This approach does not use the
-asymptotic null distribution for the weighted AUC (WAUC), the test
-statistic. This is the recommended approach for small samples.
+asymptotic null distribution for the test statistic. This is the recommended
+approach for small samples. The test statistic is the weighted AUC (WAUC).
 }
 \section{Notes}{
 
@@ -58,25 +58,12 @@ library(dsos)
 set.seed(12345)
 data(iris)
 idx <- sample(nrow(iris), 2 / 3 * nrow(iris))
-xy_train <- iris[idx, ]
-xy_test <- iris[-idx, ]
-
-# First example: residual diagnostics
-scorer_1 <- function(x_train, x_test) score_rd(x_train, x_test, response_name = "Species")
-rd_test <- pt_oob(xy_train, xy_test, scorer = scorer_1)
-rd_test
-
-# Second example: prediction uncertainty
-scorer_2 <- function(x_train, x_test) score_rue(x_train, x_test, response_name = "Species")
-rue_test <- pt_oob(xy_train, xy_test, scorer = scorer_2)
-rue_test
-
-# Third example: sample memberships (class probabilities)
-setosa <- iris[1:50, 1:4] # Training sample: Species == 'setosa'
-versicolor <- iris[51:100, 1:4] # Test sample: Species == 'versicolor'
-scorer_3 <- function(x_train, x_test) score_cp(x_train, x_test)
-cp_test <- pt_oob(setosa, versicolor, scorer = scorer_3)
-cp_test
+iris_train <- iris[idx, ]
+iris_test <- iris[-idx, ]
+# Use a synthetic (fake) scoring function for illustration
+scorer <- function(tr, te) list(train=runif(nrow(tr)), test=runif(nrow(te)))
+pt_test <- pt_oob(iris_train, iris_test, scorer = scorer)
+pt_test
 }
 
 }
@@ -88,10 +75,6 @@ In The 38th Conference on Uncertainty in Artificial Intelligence. PMLR.
 Gandy, A. (2009).
 \emph{Sequential implementation of Monte Carlo tests with uniformly bounded resampling risk}.
 Journal of the American Statistical Association, 104(488), 1504-1511.
-
-Li, J., & Fine, J. P. (2010).
-\emph{Weighted area under the receiver operating characteristic curve and its application to gene selection}.
-Journal of the Royal Statistical Society: Series C (Applied Statistics), 59(4), 673-692.
 }
 \seealso{
 [pt_refit()] for (slower) p-value approximation via refitting.

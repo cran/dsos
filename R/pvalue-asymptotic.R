@@ -41,15 +41,13 @@ asymptotic_os <- function(os_train, os_test) {
     n_test = length(os_test),
     obs = result_list$wauc
   )
-
-  # Wrap result in a list
-  test_list <- list()
-  test_list[["seq_mct"]] <- NULL
-  test_list[["statistic"]] <- result_list$wauc
-  test_list[["p_value"]] <- p_value
-  test_list[["outlier_scores"]] <- result_list$outlier_scores
-  class(test_list) <- "outlier.test"
-  return(test_list)
+  dsos_test <- list()
+  dsos_test[["seq_mct"]] <- NULL
+  dsos_test[["statistic"]] <- result_list$wauc
+  dsos_test[["p_value"]] <- p_value
+  dsos_test[["outlier_scores"]] <- result_list$outlier_scores
+  class(dsos_test) <- "outlier.test"
+  return(dsos_test)
 }
 
 #' @title
@@ -82,15 +80,11 @@ asymptotic_os <- function(os_train, os_test) {
 #' setosa <- iris[1:50, 1:4] # Training sample: Species == 'setosa'
 #' versicolor <- iris[51:100, 1:4] # Test sample: Species == 'versicolor'
 #'
-#' # Sample memberships with sample splitting
-#' scorer_split <- function(x_train, x_test) split_cp(x_train, x_test)
-#' cp_test <- at_oob(setosa, versicolor, scorer = scorer_split)
-#' cp_test
-#'
-#' # Sample memberships without sample splitting (out-of-bag predictions)
-#' scorer_oob <- function(x_train, x_test) score_cp(x_train, x_test)
-#' oob_test <- at_oob(setosa, versicolor, scorer = scorer_oob)
+#' # Using fake scoring function
+#' scorer <- function(tr, te) list(train=runif(nrow(tr)), test=runif(nrow(te)))
+#' oob_test <- at_oob(setosa, versicolor, scorer = scorer)
 #' oob_test
+#'
 #' }
 #'
 #' @family asymptotic-test
@@ -125,13 +119,13 @@ at_oob <- function(x_train, x_test, scorer) {
 #' @inherit at_oob details
 #'
 #' @section Notes:
-#' These outlier scores should all be out-of-bag scores to mimic out-of-sample
-#' behaviour. Otherwise, the scores from the training (reference) distribution
-#' are biased (overfitted) whereas those from the test set are not. This
-#' mismatch -- in-sample training scores versus out-of-sample (out-of-bag) test
-#' scores -- would void the validity of the statistical test. A simple fix for
-#' this, without using resampling and/or permutations, is to get the training
-#' (reference) scores from a fresh (unused) validation set.
+#' The outlier scores should all mimic out-of-sample behaviour. Mind that the
+#' training scores are not in-sample and thus, biased (overfitted) while the
+#' test scores are out-of-sample. The mismatch -- in-sample versus out-of-sample
+#' scores -- voids the test validity. A simple fix for this is to get the
+#' training scores from an indepedent (fresh) validation set; this follows
+#' the train/validation/test sample splitting convention and the validation set
+#' is effectively the reference set or distribution in this case.
 #'
 #' @examples
 #' \donttest{
